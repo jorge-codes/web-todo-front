@@ -1,151 +1,38 @@
 import React from 'react';
 
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import TaskForm from '../components/TaskForm';
+import TaskItem from '../components/TaskItem';
+
 class Tasks extends React.Component {
   render() {
     return (
       <React.Fragment>
-        {/* Panel tasks */}
-        <view className='columns'>
-          <nav className='panel column is-8 is-offset-2'>
-            <p className='panel-heading'>
-              <button className='button is-small has-icons is-link is-pulled-right'>
-                <span className='icon'>
-                  <i class='fas fa-angle-left'></i>
-                </span>
-                <span>back</span>
-              </button>
-              Task list
-            </p>
+        <div className='container'>
+          <Header />
 
-            {/* TaskItem normal state */}
-            <view className='panel-block'>
-              <view className='column'>
-                <form>
-                  <div className='field has-addons is-expanded'>
-                    <div className='control'>
-                      <input type='checkbox' />
-                    </div>
-                    <div className='control is-expanded'>
-                      <span>Task #1</span>
-                    </div>
-                    <div className='control'>
-                      <button
-                        className='button is-light is-small has-icons'
-                        type='button'
-                      >
-                        <i class='fas fa-times'></i>
-                      </button>
-                    </div>
-                  </div>
-                </form>
-              </view>
-            </view>
-
-            {/* TaskItem done state */}
-            <view className='panel-block'>
-              <view className='column'>
-                <form>
-                  <div className='field has-addons is-expanded'>
-                    <div className='control'>
-                      <input type='checkbox' />
-                    </div>
-                    <div className='control is-expanded'>
-                      <span className='has-text-grey has-line-through'>
-                        Task done
-                      </span>
-                    </div>
-                    <div className='control'>
-                      <button
-                        className='button is-light is-small has-icons'
-                        type='button'
-                      >
-                        <i class='fas fa-times'></i>
-                      </button>
-                    </div>
-                  </div>
-                </form>
-              </view>
-            </view>
-
-            {/* TaskItem modify state */}
-            <view className='panel-block'>
-              <view className='column'>
-                <form>
-                  <div className='field has-addons is-expanded'>
-                    <div className='control is-expanded'>
-                      <input
-                        className='input is-small'
-                        type='text'
-                        placeholder='Task to be modified'
-                      />
-                    </div>
-                    <div className='control'>
-                      <button
-                        className='button is-success is-small has-icons'
-                        type='submit'
-                      >
-                        <i class='fas fa-check'></i>
-                      </button>
-                    </div>
-                    <div className='control'>
-                      <button
-                        className='button is-light is-small has-icons'
-                        type='reset'
-                      >
-                        <i class='fas fa-times'></i>
-                      </button>
-                    </div>
-                  </div>
-                </form>
-              </view>
-            </view>
-
-            {/* TaskForm state button */}
-            <view className='panel-block'>
-              <view className='column'>
-                <button
-                  className='button is-primary is-light has-icons'
-                  type='button'
-                >
-                  <span className='icon is-small'>
-                    <i class='fas fa-plus'></i>
+          {/* Panel tasks */}
+          <div className='columns'>
+            <nav className='panel column is-8 is-offset-2'>
+              <p className='panel-heading'>
+                <button className='button is-small has-icons is-link is-pulled-right'>
+                  <span className='icon'>
+                    <i className='fas fa-angle-left'></i>
                   </span>
-                  <span>Add task</span>
+                  <span>back</span>
                 </button>
-              </view>
-            </view>
+                Task list
+              </p>
 
-            {/* TaskForm state input */}
-            <view className='panel-block'>
-              <view className='column'>
-                <form>
-                  <div className='field has-addons is-expanded'>
-                    <div className='control is-expanded'>
-                      <input
-                        className='input'
-                        type='text'
-                        placeholder='Adding new task'
-                      />
-                    </div>
-                    <div className='control'>
-                      <button
-                        className='button is-success has-icons'
-                        type='submit'
-                      >
-                        <i class='fas fa-check'></i>
-                      </button>
-                    </div>
-                    <div className='control'>
-                      <button className='button is-lighthas-icons' type='reset'>
-                        <i class='fas fa-times'></i>
-                      </button>
-                    </div>
-                  </div>
-                </form>
-              </view>
-            </view>
-          </nav>
-        </view>
+              <TaskItem />
+
+              <TaskForm />
+            </nav>
+          </div>
+
+          <Footer />
+        </div>
       </React.Fragment>
     );
   }
