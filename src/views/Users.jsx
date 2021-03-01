@@ -9,6 +9,12 @@ class Users extends React.Component {
     users: {},
   };
 
+  cleanInput = (input) => {
+    const MAX_LENGTH = 79;
+    let clean = input.trim().substring(0, MAX_LENGTH);
+    return clean;
+  };
+
   testEndopint = async () => {
     const res = await API.get('/');
     console.info(res.data.message);
@@ -16,10 +22,28 @@ class Users extends React.Component {
 
   loadUsers = async () => {
     const res = await API.get('/user');
+    if (res.status !== 200) {
+      console.error(res.data);
+      return;
+    }
     const users = res.data.reduce((users, user) => {
       users[`${user.id}`] = user;
       return users;
     }, {});
+    this.setState({ users });
+  };
+
+  addUser = async (name) => {
+    name = this.cleanInput(name);
+    const newUser = { name };
+    const res = await API.post('/user', newUser);
+    if (res.status !== 200) {
+      console.error(res.data);
+      return;
+    }
+    const user = res.data;
+    const users = this.state.users;
+    users[`${user.id}`] = user;
     this.setState({ users });
   };
 
@@ -31,7 +55,7 @@ class Users extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <UserForm />
+        <UserForm addUser={this.addUser} />
         {/* Panel */}
         <div className='columns'>
           <nav className='panel column is-8 is-offset-2'>
