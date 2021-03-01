@@ -5,13 +5,13 @@ class UserItem extends React.Component {
     isModify: false,
   };
 
-  renderNormal = () => {
+  renderNormal = (user) => {
     return (
       <React.Fragment>
         {/* UserItem normal state */}
         <div className='panel-block'>
           <div className='column'>
-            <p>Jessy Rocket</p>
+            <p>{user.name}</p>
           </div>
           <div className='column is-3'>
             <div className='buttons are-small'>
@@ -36,7 +36,7 @@ class UserItem extends React.Component {
     );
   };
 
-  renderModify = () => {
+  renderModify = (user) => {
     return (
       <React.Fragment>
         {/* UserItem modify state */}
@@ -48,7 +48,7 @@ class UserItem extends React.Component {
                   <input
                     className='input is-small'
                     type='text'
-                    placeholder='Jessy Rocket'
+                    placeholder='{user.name}'
                   />
                 </div>
                 <div className='control'>
@@ -76,10 +76,11 @@ class UserItem extends React.Component {
   };
 
   render() {
+    const user = this.props.user;
     if (this.state.isModify) {
-      return this.renderModify();
+      return this.renderModify(user);
     }
-    return this.renderNormal();
+    return this.renderNormal(user);
   }
 }
 
