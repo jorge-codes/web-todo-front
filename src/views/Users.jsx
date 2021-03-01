@@ -42,7 +42,7 @@ class Users extends React.Component {
       return;
     }
     const user = res.data;
-    const users = this.state.users;
+    const users = { ...this.state.users };
     users[`${user.id}`] = user;
     this.setState({ users });
   };
@@ -54,8 +54,21 @@ class Users extends React.Component {
       return;
     }
     const user = res.data;
-    const users = this.state.users;
+    const users = { ...this.state.users };
     delete users[`${user.id}`];
+    this.setState({ users });
+  };
+
+  updateUser = async (updatedUser) => {
+    const id = updatedUser.id;
+    const res = await API.patch(`/user/${id}`, updatedUser);
+    if (res.status !== 200) {
+      console.error(res.data);
+      return;
+    }
+    const user = res.data;
+    const users = { ...this.state.users };
+    users[`${user.id}`] = user;
     this.setState({ users });
   };
 
@@ -75,8 +88,10 @@ class Users extends React.Component {
             {Object.keys(this.state.users).map((key) => (
               <UserItem
                 key={key}
+                id={key}
                 user={this.state.users[key]}
                 deleteUser={this.deleteUser}
+                updateUser={this.updateUser}
               />
             ))}
           </nav>
