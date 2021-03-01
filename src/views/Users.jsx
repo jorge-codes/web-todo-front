@@ -47,6 +47,18 @@ class Users extends React.Component {
     this.setState({ users });
   };
 
+  deleteUser = async (id) => {
+    const res = await API.delete(`/user/${id}`);
+    if (res.status !== 200) {
+      console.error(res.data);
+      return;
+    }
+    const user = res.data;
+    const users = this.state.users;
+    delete users[`${user.id}`];
+    this.setState({ users });
+  };
+
   componentDidMount() {
     this.testEndopint();
     this.loadUsers();
@@ -61,7 +73,11 @@ class Users extends React.Component {
           <nav className='panel column is-8 is-offset-2'>
             <p className='panel-heading'>Users List</p>
             {Object.keys(this.state.users).map((key) => (
-              <UserItem key={key} user={this.state.users[key]} />
+              <UserItem
+                key={key}
+                user={this.state.users[key]}
+                deleteUser={this.deleteUser}
+              />
             ))}
           </nav>
         </div>

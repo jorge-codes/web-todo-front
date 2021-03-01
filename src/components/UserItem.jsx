@@ -5,6 +5,10 @@ class UserItem extends React.Component {
     isModify: false,
   };
 
+  buttonDeleteHandler = (event) => {
+    this.props.deleteUser(this.props.user.id);
+  };
+
   renderNormal = (user) => {
     return (
       <React.Fragment>
@@ -25,8 +29,9 @@ class UserItem extends React.Component {
           </div>
           <div className='column is-1'>
             <button
+              onClick={this.buttonDeleteHandler}
               className='button is-small is-danger has-icons'
-              type='submit'
+              type='button'
             >
               <i className='fas fa-trash'></i>
             </button>
