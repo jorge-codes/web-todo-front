@@ -6,6 +6,11 @@ import TaskForm from '../components/TaskForm';
 import TaskItem from '../components/TaskItem';
 
 class Tasks extends React.Component {
+  goBack = () => {
+    console.log(this.props);
+    this.props.history.goBack();
+  };
+
   render() {
     return (
       <React.Fragment>
@@ -16,7 +21,11 @@ class Tasks extends React.Component {
           <div className='columns'>
             <nav className='panel column is-8 is-offset-2'>
               <p className='panel-heading'>
-                <button className='button is-small has-icons is-link is-pulled-right'>
+                <button
+                  onClick={this.goBack}
+                  type='button'
+                  className='button is-small has-icons is-link is-pulled-right'
+                >
                   <span className='icon'>
                     <i className='fas fa-angle-left'></i>
                   </span>

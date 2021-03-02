@@ -1,15 +1,16 @@
+//src/components/Router.jsx
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
-import App from './../App';
+import Users from '../views/Users';
 import Tasks from '../views/Tasks';
 
 const Router = () => (
   <BrowserRouter>
     <Switch>
-      <Route exact path='/' component={App} />
+      <Route exact path='/' component={Users} />
       <Route exact path='/user/:id' component={Tasks} />
-      <Route component={App} />
+      <Route component={Users} />
     </Switch>
   </BrowserRouter>
 );

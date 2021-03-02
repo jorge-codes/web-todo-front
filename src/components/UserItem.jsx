@@ -11,6 +11,11 @@ class UserItem extends React.Component {
     this.setState((prevState) => ({ isModify: !prevState.isModify }));
   };
 
+  buttonTaskHandler = (event) => {
+    const user = this.props.user;
+    this.props.history.push(`/user/${user.id}`);
+  };
+
   buttonDeleteHandler = (event) => {
     this.props.deleteUser(this.props.user.id);
   };
@@ -54,7 +59,11 @@ class UserItem extends React.Component {
               >
                 <i className='fas fa-edit'></i>
               </button>
-              <button className='button is-info has-icons' type='button'>
+              <button
+                onClick={this.buttonTaskHandler}
+                className='button is-info has-icons'
+                type='button'
+              >
                 <i className='fas fa-list'></i>
               </button>
             </div>

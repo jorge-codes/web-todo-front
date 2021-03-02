@@ -1,5 +1,7 @@
 import React from 'react';
 
+import Header from './../components/Header';
+import Footer from './../components/Footer';
 import UserForm from './../components/UserForm';
 import UserItem from './../components/UserItem';
 import API from './../Api';
@@ -79,7 +81,9 @@ class Users extends React.Component {
 
   render() {
     return (
-      <React.Fragment>
+      <div className='container'>
+        <Header />
+
         <UserForm addUser={this.addUser} />
         {/* Panel */}
         <div className='columns'>
@@ -89,6 +93,7 @@ class Users extends React.Component {
               <UserItem
                 key={key}
                 id={key}
+                history={this.props.history}
                 user={this.state.users[key]}
                 deleteUser={this.deleteUser}
                 updateUser={this.updateUser}
@@ -96,7 +101,9 @@ class Users extends React.Component {
             ))}
           </nav>
         </div>
-      </React.Fragment>
+
+        <Footer />
+      </div>
     );
   }
 }
