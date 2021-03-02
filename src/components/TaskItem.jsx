@@ -6,7 +6,7 @@ class TaskItem extends React.Component {
     isModify: false,
   };
 
-  renderNormal = () => {
+  renderNormal = (task) => {
     return (
       <React.Fragment>
         {/* TaskItem normal state */}
@@ -20,10 +20,10 @@ class TaskItem extends React.Component {
                 <div className='control is-expanded'>
                   {this.state.isDone ? (
                     <span className='has-text-grey has-line-through'>
-                      Task #1
+                      {task.description}
                     </span>
                   ) : (
-                    <span>Task #1</span>
+                    <span>{task.description}</span>
                   )}
                 </div>
                 <div className='control'>
@@ -42,7 +42,7 @@ class TaskItem extends React.Component {
     );
   };
 
-  renderModify = () => {
+  renderModify = (task) => {
     return (
       <React.Fragment>
         {/* TaskItem modify state */}
@@ -52,9 +52,9 @@ class TaskItem extends React.Component {
               <div className='field has-addons is-expanded'>
                 <div className='control is-expanded'>
                   <input
+                    defaultValue={task.description}
                     className='input is-small'
                     type='text'
-                    placeholder='Task to be modified'
                   />
                 </div>
                 <div className='control'>
@@ -82,10 +82,11 @@ class TaskItem extends React.Component {
   };
 
   render() {
+    const task = this.props.task;
     if (this.state.isModify) {
-      return this.renderModify();
+      return this.renderModify(task);
     }
-    return this.renderNormal();
+    return this.renderNormal(task);
   }
 }
 
