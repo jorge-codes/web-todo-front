@@ -4,6 +4,27 @@ class TaskForm extends React.Component {
   state = {
     isCreate: false,
   };
+  descriptionRef = React.createRef();
+
+  toggle = () => {
+    this.setState((prevState) => ({ isCreate: !prevState.isCreate }));
+  };
+
+  submitHandler = (event) => {
+    event.preventDefault();
+    const description = this.descriptionRef.current.value;
+    this.props.addTask(this.props.user.id, description);
+    event.currentTarget.reset();
+    this.toggle();
+  };
+
+  buttonCreateHandler = (event) => {
+    this.toggle();
+  };
+
+  buttonCancelHandler = (event) => {
+    this.toggle();
+  };
 
   renderNormal = () => {
     return (
@@ -12,6 +33,7 @@ class TaskForm extends React.Component {
         <div className='panel-block'>
           <div className='column'>
             <button
+              onClick={this.buttonCreateHandler}
               className='button is-primary is-light has-icons'
               type='button'
             >
@@ -26,19 +48,26 @@ class TaskForm extends React.Component {
     );
   };
 
+  componentDidUpdate() {
+    if (this.state.isCreate) {
+      this.descriptionRef.current.focus();
+    }
+  }
+
   renderCreate = () => {
     return (
       <React.Fragment>
         {/* TaskForm state input */}
         <div className='panel-block'>
           <div className='column'>
-            <form>
+            <form onSubmit={this.submitHandler}>
               <div className='field has-addons is-expanded'>
                 <div className='control is-expanded'>
                   <input
+                    ref={this.descriptionRef}
                     className='input'
                     type='text'
-                    placeholder='Adding new task'
+                    placeholder='Add new task here...'
                   />
                 </div>
                 <div className='control'>
@@ -47,7 +76,11 @@ class TaskForm extends React.Component {
                   </button>
                 </div>
                 <div className='control'>
-                  <button className='button is-lighthas-icons' type='reset'>
+                  <button
+                    onClick={this.buttonCancelHandler}
+                    className='button is-lighthas-icons'
+                    type='reset'
+                  >
                     <i className='fas fa-times'></i>
                   </button>
                 </div>

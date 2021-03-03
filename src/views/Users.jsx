@@ -5,16 +5,11 @@ import Footer from './../components/Footer';
 import UserForm from './../components/UserForm';
 import UserItem from './../components/UserItem';
 import API from './../Api';
+import { INPUT_MAX_LENGTH, cleanInput } from '../Helpers';
 
 class Users extends React.Component {
   state = {
     users: {},
-  };
-
-  cleanInput = (input) => {
-    const MAX_LENGTH = 79;
-    let clean = input.trim().substring(0, MAX_LENGTH);
-    return clean;
   };
 
   testEndopint = async () => {
@@ -36,9 +31,10 @@ class Users extends React.Component {
   };
 
   addUser = async (name) => {
-    name = this.cleanInput(name);
+    name = cleanInput(name, INPUT_MAX_LENGTH);
     const newUser = { name };
     const res = await API.post('/user', newUser);
+    //FIXME: use promises
     if (res.status !== 200) {
       console.error(res.data);
       return;
@@ -63,6 +59,7 @@ class Users extends React.Component {
 
   updateUser = async (updatedUser) => {
     const id = updatedUser.id;
+    updatedUser.name = cleanInput(updatedUser.name, INPUT_MAX_LENGTH);
     const res = await API.patch(`/user/${id}`, updatedUser);
     if (res.status !== 200) {
       console.error(res.data);
