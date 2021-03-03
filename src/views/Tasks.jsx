@@ -29,21 +29,17 @@ class Tasks extends React.Component {
   }
 
   loadTasks = async (id) => {
-    console.log(`loadTasks`);
-    const res = await API.get(`/task/user/${id}`);
-    // FIXME: this is not working as expected
-    if (res.status !== 200) {
-      console.log(`status !== 200`);
+    try {
+      const res = await API.get(`/task/user/${id}`);
+      const user = res.data.user;
+      const tasks = res.data.tasks.reduce((tasks, task) => {
+        tasks[`${task.id}`] = task;
+        return tasks;
+      }, {});
+      this.setState({ user, tasks });
+    } catch (error) {
       this.goHome();
-      return;
     }
-
-    const user = res.data.user;
-    const tasks = res.data.tasks.reduce((tasks, task) => {
-      tasks[`${task.id}`] = task;
-      return tasks;
-    }, {});
-    this.setState({ user, tasks });
   };
 
   render() {
