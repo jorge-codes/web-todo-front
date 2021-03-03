@@ -1,14 +1,43 @@
 import React from 'react';
 
 class TaskItem extends React.Component {
+  checkDoneRef = React.createRef();
+  descriptionRef = React.createRef();
+
   state = {
-    isDone: false,
     isModify: false,
+  };
+
+  toggle = () => {
+    this.setState((prevState) => ({ isModify: !prevState.isModify }));
   };
 
   buttonDeleteHandler = (event) => {
     const id = this.props.task.id;
     this.props.deleteTask(id);
+  };
+
+  checkDoneHandler = (event) => {
+    const task = { ...this.props.task };
+    task.state = event.currentTarget.checked;
+    this.props.updateTask(task);
+  };
+
+  clickHandler = (event) => {
+    this.toggle();
+  };
+
+  buttonCancelHandler = (event) => {
+    this.toggle();
+  };
+
+  submitHandler = (event) => {
+    event.preventDefault();
+    const task = { ...this.props.task };
+    task.description = this.descriptionRef.current.value;
+    this.props.updateTask(task);
+    event.currentTarget.reset();
+    this.toggle();
   };
 
   renderNormal = (task) => {
@@ -20,11 +49,19 @@ class TaskItem extends React.Component {
             <form>
               <div className='field has-addons is-expanded'>
                 <div className='control'>
-                  <input type='checkbox' defaultChecked={this.state.isDone} />
+                  <input
+                    ref={this.checkDoneRef}
+                    onChange={this.checkDoneHandler}
+                    type='checkbox'
+                    defaultChecked={task.state}
+                  />
                 </div>
-                <div className='control is-expanded'>
-                  {this.state.isDone ? (
-                    <span className='has-text-grey has-line-through'>
+                <div
+                  onClick={this.clickHandler}
+                  className='control is-expanded'
+                >
+                  {task.state ? (
+                    <span className='has-text-grey-light has-line-through'>
                       {task.description}
                     </span>
                   ) : (
@@ -52,12 +89,14 @@ class TaskItem extends React.Component {
     return (
       <React.Fragment>
         {/* TaskItem modify state */}
+
         <div className='panel-block'>
           <div className='column'>
-            <form>
+            <form onSubmit={this.submitHandler}>
               <div className='field has-addons is-expanded'>
                 <div className='control is-expanded'>
                   <input
+                    ref={this.descriptionRef}
                     defaultValue={task.description}
                     className='input is-small'
                     type='text'
@@ -73,6 +112,7 @@ class TaskItem extends React.Component {
                 </div>
                 <div className='control'>
                   <button
+                    onClick={this.buttonCancelHandler}
                     className='button is-light is-small has-icons'
                     type='reset'
                   >
@@ -86,6 +126,15 @@ class TaskItem extends React.Component {
       </React.Fragment>
     );
   };
+
+  componentDidUpdate() {
+    if (this.state.isModify) {
+      this.descriptionRef.current.focus();
+      const description = this.descriptionRef.current.value;
+      this.descriptionRef.current.value = '';
+      this.descriptionRef.current.value = description;
+    }
+  }
 
   render() {
     const task = this.props.task;

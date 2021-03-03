@@ -73,6 +73,23 @@ class Tasks extends React.Component {
       });
   };
 
+  updateTask = (updatedTask) => {
+    updatedTask.description = cleanInput(
+      updatedTask.description,
+      INPUT_MAX_LENGTH
+    );
+    API.patch(`/task/${updatedTask.id}`, updatedTask)
+      .then((response) => {
+        const task = response.data;
+        const tasks = { ...this.state.tasks };
+        tasks[`${task.id}`] = task;
+        this.setState({ tasks });
+      })
+      .catch((error) => {
+        console.log(error.config);
+      });
+  };
+
   render() {
     return (
       <React.Fragment>
@@ -101,6 +118,7 @@ class Tasks extends React.Component {
                   key={key}
                   task={this.state.tasks[key]}
                   deleteTask={this.deleteTask}
+                  updateTask={this.updateTask}
                 />
               ))}
 
