@@ -60,6 +60,19 @@ class Tasks extends React.Component {
       });
   };
 
+  deleteTask = (id) => {
+    API.delete(`/task/${id}`)
+      .then((response) => {
+        const task = response.data;
+        const tasks = { ...this.state.tasks };
+        delete tasks[`${task.id}`];
+        this.setState({ tasks });
+      })
+      .catch((error) => {
+        console.log(error.config);
+      });
+  };
+
   render() {
     return (
       <React.Fragment>
@@ -84,7 +97,11 @@ class Tasks extends React.Component {
               </p>
 
               {Object.keys(this.state.tasks).map((key) => (
-                <TaskItem key={key} task={this.state.tasks[key]} />
+                <TaskItem
+                  key={key}
+                  task={this.state.tasks[key]}
+                  deleteTask={this.deleteTask}
+                />
               ))}
 
               <TaskForm user={this.state.user} addTask={this.addTask} />

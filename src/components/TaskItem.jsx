@@ -6,6 +6,11 @@ class TaskItem extends React.Component {
     isModify: false,
   };
 
+  buttonDeleteHandler = (event) => {
+    const id = this.props.task.id;
+    this.props.deleteTask(id);
+  };
+
   renderNormal = (task) => {
     return (
       <React.Fragment>
@@ -28,6 +33,7 @@ class TaskItem extends React.Component {
                 </div>
                 <div className='control'>
                   <button
+                    onClick={this.buttonDeleteHandler}
                     className='button is-light is-small has-icons'
                     type='button'
                   >
