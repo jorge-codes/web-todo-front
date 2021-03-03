@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 import TaskForm from '../components/TaskForm';
 import TaskItem from '../components/TaskItem';
 import API from '../Api';
+import { INPUT_MAX_LENGTH, cleanInput } from '../Helpers';
 
 class Tasks extends React.Component {
   state = {
@@ -32,6 +33,7 @@ class Tasks extends React.Component {
     try {
       const res = await API.get(`/task/user/${id}`);
       const user = res.data.user;
+      user.id = id;
       const tasks = res.data.tasks.reduce((tasks, task) => {
         tasks[`${task.id}`] = task;
         return tasks;
@@ -40,6 +42,22 @@ class Tasks extends React.Component {
     } catch (error) {
       this.goHome();
     }
+  };
+
+  addTask = (user, description) => {
+    description = cleanInput(description, INPUT_MAX_LENGTH);
+    const newTask = { user, description };
+    API.post(`/task`, newTask)
+      .then((response) => {
+        // Success!
+        const task = response.data;
+        const tasks = { ...this.state.tasks };
+        tasks[`${task.id}`] = task;
+        this.setState({ tasks });
+      })
+      .catch((error) => {
+        console.log(error.config);
+      });
   };
 
   render() {
@@ -69,7 +87,7 @@ class Tasks extends React.Component {
                 <TaskItem key={key} task={this.state.tasks[key]} />
               ))}
 
-              <TaskForm />
+              <TaskForm user={this.state.user} addTask={this.addTask} />
             </nav>
           </div>
 
