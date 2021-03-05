@@ -12,67 +12,64 @@ class Users extends React.Component {
     users: {},
   };
 
-  testEndopint = async () => {
-    const res = await API.get('/');
-    console.info(res.data.message);
-  };
-
   loadUsers = async () => {
-    const res = await API.get('/user');
-    if (res.status !== 200) {
-      console.error(res.data);
-      return;
-    }
-    const users = res.data.reduce((users, user) => {
-      users[`${user.id}`] = user;
-      return users;
-    }, {});
-    this.setState({ users });
+    API.get('/user')
+      .then((response) => {
+        const users = response.data.reduce((users, user) => {
+          users[`${user.id}`] = user;
+          return users;
+        }, {});
+        this.setState({ users });
+      })
+      .catch((error) => {
+        console.log(error.config);
+      });
   };
 
   addUser = async (name) => {
     name = cleanInput(name, INPUT_MAX_LENGTH);
     const newUser = { name };
-    const res = await API.post('/user', newUser);
-    //FIXME: use promises
-    if (res.status !== 200) {
-      console.error(res.data);
-      return;
-    }
-    const user = res.data;
-    const users = { ...this.state.users };
-    users[`${user.id}`] = user;
-    this.setState({ users });
+    API.post('/user', newUser)
+      .then((response) => {
+        const user = response.data;
+        const users = { ...this.state.users };
+        users[`${user.id}`] = user;
+        this.setState({ users });
+      })
+      .catch((error) => {
+        console.log(error.config);
+      });
   };
 
   deleteUser = async (id) => {
-    const res = await API.delete(`/user/${id}`);
-    if (res.status !== 200) {
-      console.error(res.data);
-      return;
-    }
-    const user = res.data;
-    const users = { ...this.state.users };
-    delete users[`${user.id}`];
-    this.setState({ users });
+    API.delete(`/user/${id}`)
+      .then((response) => {
+        const user = response.data;
+        const users = { ...this.state.users };
+        delete users[`${user.id}`];
+        this.setState({ users });
+      })
+      .catch((error) => {
+        console.log(error.config);
+      });
   };
 
   updateUser = async (updatedUser) => {
     const id = updatedUser.id;
     updatedUser.name = cleanInput(updatedUser.name, INPUT_MAX_LENGTH);
-    const res = await API.patch(`/user/${id}`, updatedUser);
-    if (res.status !== 200) {
-      console.error(res.data);
-      return;
-    }
-    const user = res.data;
-    const users = { ...this.state.users };
-    users[`${user.id}`] = user;
-    this.setState({ users });
+    API.patch(`/user/${id}`, updatedUser)
+      .then((response) => {
+        const user = response.data;
+        const users = { ...this.state.users };
+        users[`${user.id}`] = user;
+        this.setState({ users });
+      })
+      .catch((error) => {
+        console.log(error.config);
+      });
   };
 
   componentDidMount() {
-    this.testEndopint();
     this.loadUsers();
   }
 
