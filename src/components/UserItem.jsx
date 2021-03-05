@@ -1,48 +1,49 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
-class UserItem extends React.Component {
-  nameRef = React.createRef();
+const UserItem = (props) => {
+  const nameRef = useRef(null);
 
-  state = {
-    isModify: false,
+  const [isEdit, setIsEdit] = useState(false);
+  // const [name, setName] = useState('');
+
+  useEffect(() => {
+    console.log('component updated');
+    if (isEdit) {
+      nameRef.current.focus();
+    }
+  });
+
+  const toggle = () => {
+    setIsEdit(!isEdit);
   };
 
-  toggle = () => {
-    this.setState((prevState) => ({ isModify: !prevState.isModify }));
+  const buttonTaskHandler = (event) => {
+    const user = props.user;
+    props.history.push(`/user/${user.id}`);
   };
 
-  buttonTaskHandler = (event) => {
-    const user = this.props.user;
-    this.props.history.push(`/user/${user.id}`);
+  const buttonDeleteHandler = (event) => {
+    props.deleteUser(props.user.id);
   };
 
-  buttonDeleteHandler = (event) => {
-    this.props.deleteUser(this.props.user.id);
+  const buttonEditHandler = (event) => {
+    toggle();
   };
 
-  buttonEditHandler = (event) => {
-    this.toggle();
+  const buttonResetHandler = (event) => {
+    toggle();
   };
 
-  buttonResetHandler = (event) => {
-    this.toggle();
-  };
-
-  inputChangeHandler = (event) => {
-    console.log(event.target.value);
-    this.setState({ name: event.target.value });
-  };
-
-  submitHandler = (event) => {
+  const submitHandler = (event) => {
     event.preventDefault();
-    const name = this.nameRef.current.value;
-    const user = { ...this.props.user };
+    const name = nameRef.current.value;
+    const user = { ...props.user };
     user.name = name;
-    this.props.updateUser(user);
-    this.toggle();
+    props.updateUser(user);
+    toggle();
   };
 
-  renderNormal = (user) => {
+  const renderNormal = (user) => {
     return (
       <React.Fragment>
         {/* UserItem normal state */}
@@ -53,14 +54,14 @@ class UserItem extends React.Component {
           <div className='column is-3'>
             <div className='buttons are-small'>
               <button
-                onClick={this.buttonEditHandler}
+                onClick={buttonEditHandler}
                 className='button is-light has-icons'
                 type='button'
               >
                 <i className='fas fa-edit'></i>
               </button>
               <button
-                onClick={this.buttonTaskHandler}
+                onClick={buttonTaskHandler}
                 className='button is-info has-icons'
                 type='button'
               >
@@ -70,7 +71,7 @@ class UserItem extends React.Component {
           </div>
           <div className='column is-1'>
             <button
-              onClick={this.buttonDeleteHandler}
+              onClick={buttonDeleteHandler}
               className='button is-small is-danger has-icons'
               type='button'
             >
@@ -82,17 +83,17 @@ class UserItem extends React.Component {
     );
   };
 
-  renderModify = (user) => {
+  const renderEdit = (user) => {
     return (
       <React.Fragment>
         {/* UserItem modify state */}
         <div className='panel-block'>
           <div className='column'>
-            <form onSubmit={this.submitHandler}>
+            <form onSubmit={submitHandler}>
               <div className='field has-addons is-expanded'>
                 <div className='control is-expanded'>
                   <input
-                    ref={this.nameRef}
+                    ref={nameRef}
                     defaultValue={user.name}
                     className='input is-small'
                     type='text'
@@ -109,7 +110,7 @@ class UserItem extends React.Component {
                 </div>
                 <div className='control'>
                   <button
-                    onClick={this.buttonResetHandler}
+                    onClick={buttonResetHandler}
                     className='button is-light is-small has-icons'
                     type='reset'
                   >
@@ -124,19 +125,10 @@ class UserItem extends React.Component {
     );
   };
 
-  componentDidUpdate() {
-    if (this.state.isModify) {
-      this.nameRef.current.focus();
-    }
+  if (isEdit) {
+    return renderEdit(props.user);
   }
-
-  render() {
-    const user = this.props.user;
-    if (this.state.isModify) {
-      return this.renderModify(user);
-    }
-    return this.renderNormal(user);
-  }
-}
+  return renderNormal(props.user);
+};
 
 export default UserItem;
