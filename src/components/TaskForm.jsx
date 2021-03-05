@@ -1,39 +1,43 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
-class TaskForm extends React.Component {
-  state = {
-    isCreate: false,
+const TaskForm = (props) => {
+  const [isEdit, setEdit] = useState(false);
+  const descriptionRef = useRef(null);
+
+  useEffect(() => {
+    if (isEdit) {
+      descriptionRef.current.focus();
+    }
+  });
+
+  const toggle = () => {
+    setEdit(!isEdit);
   };
-  descriptionRef = React.createRef();
 
-  toggle = () => {
-    this.setState((prevState) => ({ isCreate: !prevState.isCreate }));
-  };
-
-  submitHandler = (event) => {
+  const submitHandler = (event) => {
     event.preventDefault();
-    const description = this.descriptionRef.current.value;
-    this.props.addTask(this.props.user.id, description);
+    const description = descriptionRef.current.value;
+    props.addTask(props.user.id, description);
     event.currentTarget.reset();
-    this.toggle();
+    toggle();
   };
 
-  buttonCreateHandler = (event) => {
-    this.toggle();
+  const buttonCreateHandler = (event) => {
+    toggle();
   };
 
-  buttonCancelHandler = (event) => {
-    this.toggle();
+  const buttonCancelHandler = (event) => {
+    toggle();
   };
 
-  renderNormal = () => {
+  const renderNormal = () => {
     return (
       <React.Fragment>
         {/* TaskForm state button */}
         <div className='panel-block'>
           <div className='column'>
             <button
-              onClick={this.buttonCreateHandler}
+              onClick={buttonCreateHandler}
               className='button is-primary is-light has-icons'
               type='button'
             >
@@ -48,23 +52,23 @@ class TaskForm extends React.Component {
     );
   };
 
-  componentDidUpdate() {
-    if (this.state.isCreate) {
-      this.descriptionRef.current.focus();
-    }
-  }
+  // componentDidUpdate() {
+  //   if (state.isCreate) {
+  //     descriptionRef.current.focus();
+  //   }
+  // }
 
-  renderCreate = () => {
+  const renderEdit = () => {
     return (
       <React.Fragment>
         {/* TaskForm state input */}
         <div className='panel-block'>
           <div className='column'>
-            <form onSubmit={this.submitHandler}>
+            <form onSubmit={submitHandler}>
               <div className='field has-addons is-expanded'>
                 <div className='control is-expanded'>
                   <input
-                    ref={this.descriptionRef}
+                    ref={descriptionRef}
                     className='input'
                     type='text'
                     placeholder='Add new task here...'
@@ -77,7 +81,7 @@ class TaskForm extends React.Component {
                 </div>
                 <div className='control'>
                   <button
-                    onClick={this.buttonCancelHandler}
+                    onClick={buttonCancelHandler}
                     className='button is-lighthas-icons'
                     type='reset'
                   >
@@ -92,12 +96,10 @@ class TaskForm extends React.Component {
     );
   };
 
-  render() {
-    if (this.state.isCreate) {
-      return this.renderCreate();
-    }
-    return this.renderNormal();
+  if (isEdit) {
+    return renderEdit();
   }
-}
+  return renderNormal();
+};
 
 export default TaskForm;

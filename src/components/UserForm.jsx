@@ -4,6 +4,10 @@ const UserForm = (props) => {
   const [inputText, setInputText] = useState('');
   const inputRef = useRef(null);
 
+  useEffect(() => {
+    inputRef.current.focus();
+  }, []);
+
   const inputHandler = (event) => {
     setInputText(event.currentTarget.value);
   };
@@ -14,10 +18,6 @@ const UserForm = (props) => {
     props.addUser(name);
     event.currentTarget.reset();
   };
-
-  useEffect(() => {
-    inputRef.current.focus();
-  }, []);
 
   return (
     <React.Fragment>
