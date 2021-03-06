@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import Header from './../components/Header';
 import Footer from './../components/Footer';
@@ -7,99 +7,95 @@ import UserItem from './../components/UserItem';
 import API from './../Api';
 import { INPUT_MAX_LENGTH, cleanInput } from '../Helpers';
 
-class Users extends React.Component {
-  state = {
-    users: {},
-  };
+const Users = (props) => {
+  const [users, setUsers] = useState({});
 
-  loadUsers = async () => {
+  const loadUsers = async () => {
     API.get('/user')
       .then((response) => {
-        const users = response.data.reduce((users, user) => {
-          users[`${user.id}`] = user;
-          return users;
+        const _users = response.data.reduce((_users, _user) => {
+          _users[`${_user.id}`] = _user;
+          return _users;
         }, {});
-        this.setState({ users });
+        setUsers(_users);
       })
       .catch((error) => {
         console.log(error.config);
       });
   };
 
-  addUser = async (name) => {
+  const addUser = async (name) => {
     name = cleanInput(name, INPUT_MAX_LENGTH);
     const newUser = { name };
     API.post('/user', newUser)
       .then((response) => {
-        const user = response.data;
-        const users = { ...this.state.users };
-        users[`${user.id}`] = user;
-        this.setState({ users });
+        const _user = response.data;
+        const _users = { ...users };
+        _users[`${_user.id}`] = _user;
+        setUsers(_users);
       })
       .catch((error) => {
         console.log(error.config);
       });
   };
 
-  deleteUser = async (id) => {
+  const deleteUser = async (id) => {
     API.delete(`/user/${id}`)
       .then((response) => {
-        const user = response.data;
-        const users = { ...this.state.users };
-        delete users[`${user.id}`];
-        this.setState({ users });
+        const _user = response.data;
+        const _users = { ...users };
+        delete _users[`${_user.id}`];
+        setUsers(_users);
       })
       .catch((error) => {
         console.log(error.config);
       });
   };
 
-  updateUser = async (updatedUser) => {
+  const updateUser = async (updatedUser) => {
     const id = updatedUser.id;
     updatedUser.name = cleanInput(updatedUser.name, INPUT_MAX_LENGTH);
     API.patch(`/user/${id}`, updatedUser)
       .then((response) => {
-        const user = response.data;
-        const users = { ...this.state.users };
-        users[`${user.id}`] = user;
-        this.setState({ users });
+        const _user = response.data;
+        const _users = { ...users };
+        _users[`${_user.id}`] = _user;
+        setUsers(_users);
       })
       .catch((error) => {
         console.log(error.config);
       });
   };
 
-  componentDidMount() {
-    this.loadUsers();
-  }
+  useEffect(() => {
+    loadUsers();
+  }, []);
 
-  render() {
-    return (
-      <div className='container'>
-        <Header />
+  return (
+    <div className='container'>
+      <Header />
 
-        <UserForm addUser={this.addUser} />
-        {/* Panel */}
-        <div className='columns'>
-          <nav className='panel column is-8 is-offset-2'>
-            <p className='panel-heading'>Users List</p>
-            {Object.keys(this.state.users).map((key) => (
-              <UserItem
-                key={key}
-                id={key}
-                history={this.props.history}
-                user={this.state.users[key]}
-                deleteUser={this.deleteUser}
-                updateUser={this.updateUser}
-              />
-            ))}
-          </nav>
-        </div>
-
-        <Footer />
+      <UserForm addUser={addUser} />
+      {/* Panel */}
+      <div className='columns'>
+        <nav className='panel column is-8 is-offset-2'>
+          <p className='panel-heading'>Users List</p>
+          {Object.keys(users).map((key) => (
+            <UserItem
+              key={key}
+              id={key}
+              history={props.history}
+              user={users[key]}
+              deleteUser={deleteUser}
+              updateUser={updateUser}
+            />
+          ))}
+        </nav>
       </div>
-    );
-  }
-}
+
+      <Footer />
+    </div>
+  );
+};
 
 export default Users;
