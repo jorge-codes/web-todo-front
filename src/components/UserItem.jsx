@@ -7,7 +7,6 @@ const UserItem = (props) => {
   // const [name, setName] = useState('');
 
   useEffect(() => {
-    console.log('component updated');
     if (isEdit) {
       nameRef.current.focus();
     }
