@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -7,130 +7,131 @@ import TaskItem from '../components/TaskItem';
 import API from '../Api';
 import { INPUT_MAX_LENGTH, cleanInput } from '../Helpers';
 
-class Tasks extends React.Component {
-  state = {
-    user: '',
-    tasks: {},
+const Tasks = (props) => {
+  const [user, setUser] = useState('');
+  const [tasks, setTasks] = useState({});
+
+  //TODO: it's not being used, and needs to be used
+  // Research the use of history prop and how to retrive history
+  // goBack = () => {
+  //   props.history.goBack();
+  // };
+
+  const goHome = () => {
+    props.history.replace('/');
   };
 
-  goBack = () => {
-    this.props.history.goBack();
+  const loadTasks = async (id) => {
+    API.get(`/task/user/${id}`)
+      .then((response) => {
+        const _user = { ...response.data.user };
+        _user.id = id;
+        const _tasks = response.data.tasks.reduce((_tasks, _task) => {
+          _tasks[`${_task.id}`] = _task;
+          return _tasks;
+        }, {});
+        setUser(_user);
+        setTasks(_tasks);
+      })
+      .catch((error) => {
+        console.log(error.config);
+        goHome();
+      });
   };
 
-  goHome = () => {
-    this.props.history.replace('/');
-  };
-
-  componentDidMount() {
-    const id = this.props.match.params.id;
-    if (id === undefined || id === '') {
-      this.goHome();
-    }
-    this.loadTasks(id);
-  }
-
-  loadTasks = async (id) => {
-    try {
-      const res = await API.get(`/task/user/${id}`);
-      const user = res.data.user;
-      user.id = id;
-      const tasks = res.data.tasks.reduce((tasks, task) => {
-        tasks[`${task.id}`] = task;
-        return tasks;
-      }, {});
-      this.setState({ user, tasks });
-    } catch (error) {
-      this.goHome();
-    }
-  };
-
-  addTask = (user, description) => {
-    description = cleanInput(description, INPUT_MAX_LENGTH);
-    const newTask = { user, description };
+  const addTask = (_user, _description) => {
+    _description = cleanInput(_description, INPUT_MAX_LENGTH);
+    const newTask = { user: _user, description: _description };
     API.post(`/task`, newTask)
       .then((response) => {
-        // Success!
-        const task = response.data;
-        const tasks = { ...this.state.tasks };
-        tasks[`${task.id}`] = task;
-        this.setState({ tasks });
+        const _task = response.data;
+        const _tasks = { ...tasks };
+        _tasks[`${_task.id}`] = _task;
+        setTasks(_tasks);
       })
       .catch((error) => {
         console.log(error.config);
       });
   };
 
-  deleteTask = (id) => {
+  const deleteTask = (id) => {
     API.delete(`/task/${id}`)
       .then((response) => {
-        const task = response.data;
-        const tasks = { ...this.state.tasks };
-        delete tasks[`${task.id}`];
-        this.setState({ tasks });
+        const _task = response.data;
+        const _tasks = { ...tasks };
+        delete _tasks[`${_task.id}`];
+        setTasks(_tasks);
       })
       .catch((error) => {
         console.log(error.config);
       });
   };
 
-  updateTask = (updatedTask) => {
+  const updateTask = (updatedTask) => {
     updatedTask.description = cleanInput(
       updatedTask.description,
       INPUT_MAX_LENGTH
     );
     API.patch(`/task/${updatedTask.id}`, updatedTask)
       .then((response) => {
-        const task = response.data;
-        const tasks = { ...this.state.tasks };
-        tasks[`${task.id}`] = task;
-        this.setState({ tasks });
+        const _task = response.data;
+        const _tasks = { ...tasks };
+        _tasks[`${_task.id}`] = _task;
+        setTasks(_tasks);
       })
       .catch((error) => {
         console.log(error.config);
       });
   };
 
-  render() {
-    return (
-      <React.Fragment>
-        <div className='container'>
-          <Header />
+  useEffect(() => {
+    const id = props.match.params.id;
+    if (id === undefined || id === '') {
+      goHome();
+    }
 
-          {/* Panel tasks */}
-          <div className='columns'>
-            <nav className='panel column is-8 is-offset-2'>
-              <p className='panel-heading'>
-                {this.state.user.name}'s Task List
-                <button
-                  onClick={this.goHome}
-                  type='button'
-                  className='button is-small has-icons is-link is-pulled-right'
-                >
-                  <span className='icon'>
-                    <i className='fas fa-angle-left'></i>
-                  </span>
-                  <span>back</span>
-                </button>
-              </p>
+    loadTasks(id);
+  }, []);
 
-              {Object.keys(this.state.tasks).map((key) => (
-                <TaskItem
-                  key={key}
-                  task={this.state.tasks[key]}
-                  deleteTask={this.deleteTask}
-                  updateTask={this.updateTask}
-                />
-              ))}
+  return (
+    <React.Fragment>
+      <div className='container'>
+        <Header />
 
-              <TaskForm user={this.state.user} addTask={this.addTask} />
-            </nav>
-          </div>
+        {/* Panel tasks */}
+        <div className='columns'>
+          <nav className='panel column is-8 is-offset-2'>
+            <p className='panel-heading'>
+              {user.name}'s Task List
+              <button
+                onClick={goHome}
+                type='button'
+                className='button is-small has-icons is-link is-pulled-right'
+              >
+                <span className='icon'>
+                  <i className='fas fa-angle-left'></i>
+                </span>
+                <span>back</span>
+              </button>
+            </p>
 
-          <Footer />
+            {Object.keys(tasks).map((key) => (
+              <TaskItem
+                key={key}
+                task={tasks[key]}
+                deleteTask={deleteTask}
+                updateTask={updateTask}
+              />
+            ))}
+
+            <TaskForm user={user} addTask={addTask} />
+          </nav>
         </div>
-      </React.Fragment>
-    );
-  }
-}
+
+        <Footer />
+      </div>
+    </React.Fragment>
+  );
+};
 
 export default Tasks;
